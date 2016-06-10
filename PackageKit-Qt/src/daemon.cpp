@@ -154,7 +154,7 @@ Transaction::Roles Daemon::actions()
 Transaction::ProvidesFlag Daemon::provides()
 {
     Q_D(const Daemon);
-    return static_cast<Transaction::ProvidesFlag>(d->daemon->provides());
+    return static_cast<Transaction::ProvidesFlag>(static_cast<uint>(d->daemon->provides()));
 }
 
 QString Daemon::backendName()
@@ -178,7 +178,7 @@ QString Daemon::backendAuthor()
 Transaction::Filters Daemon::filters()
 {
     Q_D(const Daemon);
-    return static_cast<Transaction::Filters>(d->daemon->filters());
+    return static_cast<Transaction::Filters>(static_cast<uint>(d->daemon->filters()));
 }
 
 Transaction::Groups Daemon::groups()
