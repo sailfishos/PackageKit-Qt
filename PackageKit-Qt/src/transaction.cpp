@@ -479,7 +479,7 @@ Transaction::TransactionFlags Transaction::transactionFlags() const
 {
     Q_D(const Transaction);
     if (d->p) {
-        return static_cast<Transaction::TransactionFlags>(d->p->transactionFlags());
+        return static_cast<Transaction::TransactionFlags>(static_cast<uint>(d->p->transactionFlags()));
     }
     return Transaction::TransactionFlagNone;
 }
