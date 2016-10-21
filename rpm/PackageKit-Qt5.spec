@@ -2,7 +2,7 @@ Summary:   Qt support library for PackageKit
 Name:      PackageKit-Qt5
 Version:   0.8.8+nemo5
 Release:   1
-License:   GPLv2+
+License:   LGPLv2+
 Group:     System/Libraries
 URL:       http://www.packagekit.org
 Source0:   http://www.packagekit.org/releases/%{name}-%{version}.tar.xz
@@ -54,7 +54,7 @@ make DESTDIR=%{buildroot} install
 
 %files
 %defattr(-,root,root,-)
-%doc AUTHORS COPYING NEWS
+%doc COPYING
 %{_libdir}/*packagekit-qt5.so.*
 
 %files devel
