@@ -1,0 +1,19 @@
+From dfd3fa5081880fed4b764062c57e834f9c8d6eef Thu, 1 Dec 2016 10:32:23 +0100
+From: Martin Grimme <martin.grimme@gmail.com>
+Date: Tue, 25 Jun 2013 21:02:18 +0200
+Subject: [PATCH] cleaned include directive
+
+
+diff --git a/src/bitfield.h b/src/bitfield.h
+index a977b26..d7dd481 100644
+--- a/src/bitfield.h
++++ b/src/bitfield.h
+@@ -1,7 +1,7 @@
+ #ifndef PACKAGEKIT_BITFIELD_H
+ #define PACKAGEKIT_BITFIELD_H
+ 
+-#include <QtCore/QtGlobal>
++#include <QtGlobal>
+ 
+ namespace PackageKit {
+ 

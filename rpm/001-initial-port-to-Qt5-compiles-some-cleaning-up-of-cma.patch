@@ -1,0 +1,117 @@
+From ae866954e13ec65a75b1d2721c15eec9c69d26aa Thu, 1 Dec 2016 10:31:47 +0100
+From: Martin Grimme <martin.grimme@gmail.com>
+Date: Tue, 25 Jun 2013 20:55:11 +0200
+Subject: [PATCH] initial port to Qt5. compiles. some cleaning up of cmake files needed, though
+
+
+diff --git a/AUTHORS b/AUTHORS
+index c9f4004..8e649d8 100644
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -1,3 +1,5 @@
+ Daniel Nicoletti <dantti12@gmail.com>
+ 
+ Matthias Klumpp <matthias@tenstral.net>
++
++Qt5 Port: Martin Grimme <martin.grimme@gmail.com>
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+old mode 100644
+new mode 100755
+index 68f60d1..52f7d58
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,16 +1,22 @@
+ # CMakeLists for PackageKit-Qt library
+ 
+-find_package(Qt4 REQUIRED)
++find_package(Qt5Core REQUIRED)
++find_package(Qt5DBus REQUIRED)
++find_package(Qt5Sql REQUIRED)
+ 
+-# Set up Qt4
++# Set up Qt5
+ set(QT_USE_QTDBUS TRUE)
+ set(QT_USE_QTSQL TRUE)
+ set(QT_DONT_USE_QTGUI TRUE)
+-include(${QT_USE_FILE})
++
++set(CMAKE_AUTOMOC TRUE)
+ 
+ include_directories(${CMAKE_BINARY_DIR}
+ 		    ${CMAKE_CURRENT_BINARY_DIR}
+ 		    ${CMAKE_CURRENT_SOURCE_DIR}
++                    ${Qt5Core_INCLUDE_DIRS}
++                    ${Qt5DBus_INCLUDE_DIRS}
++                    ${Qt5Sql_INCLUDE_DIRS}
+ )
+ 
+ set(packagekitqt_HEADERS
+@@ -46,13 +52,12 @@
+ endif ()
+ 
+ set_source_files_properties(${PK_INTERFACE_XML} PROPERTIES CLASSNAME DaemonProxy)
+-qt4_add_dbus_interface(packagekitqt_SRC ${PK_INTERFACE_XML} daemonproxy)
++qt5_add_dbus_interface(packagekitqt_SRC ${PK_INTERFACE_XML} daemonproxy)
+ 
+ set_source_files_properties(${PK_TRANSACTION_INTERFACE_XML} PROPERTIES CLASSNAME TransactionProxy)
+-qt4_add_dbus_interface(packagekitqt_SRC ${PK_TRANSACTION_INTERFACE_XML} transactionproxy)
++qt5_add_dbus_interface(packagekitqt_SRC ${PK_TRANSACTION_INTERFACE_XML} transactionproxy)
+ 
+-qt4_automoc(${packagekitqt_SRC})
+-qt4_wrap_cpp(packagekitqt_MOC_SRC ${packagekitqt_HEADERS} ${packagekitqt_HEADERS_PRIVATE})
++qt5_wrap_cpp(packagekitqt_MOC_SRC ${packagekitqt_HEADERS} ${packagekitqt_HEADERS_PRIVATE})
+ 
+ add_library(packagekit-qt2 SHARED ${packagekitqt_SRC} ${packagekitqt_HEADERS} ${packagekitqt_HEADERS_PRIVATE})
+ set_target_properties(packagekit-qt2 PROPERTIES VERSION ${QPACKAGEKIT_VERSION} SOVERSION ${QPACKAGEKIT_API_LEVEL})
+diff --git a/src/bitfield.h b/src/bitfield.h
+index d7dd481..a977b26 100644
+--- a/src/bitfield.h
++++ b/src/bitfield.h
+@@ -1,7 +1,7 @@
+ #ifndef PACKAGEKIT_BITFIELD_H
+ #define PACKAGEKIT_BITFIELD_H
+ 
+-#include <QtGlobal>
++#include <QtCore/QtGlobal>
+ 
+ namespace PackageKit {
+ 
+diff --git a/src/daemon.cpp b/src/daemon.cpp
+index 7b49745..7219112 100644
+--- a/src/daemon.cpp
++++ b/src/daemon.cpp
+@@ -355,4 +355,6 @@
+     return Transaction::packageIcon(packageID);
+ }
+ 
++#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+ #include "daemon.moc"
++#endif
+diff --git a/src/daemon.h b/src/daemon.h
+index 07d1654..6ece751 100644
+--- a/src/daemon.h
++++ b/src/daemon.h
+@@ -358,10 +358,10 @@
+ 
+         int id = T::staticMetaObject.indexOfEnumerator(enumName);
+         QMetaEnum e = T::staticMetaObject.enumerator(id);
+-        int enumValue = e.keyToValue(realName.toAscii().data());
++        int enumValue = e.keyToValue(realName.toLatin1().data());
+ 
+         if (enumValue == -1) {
+-            enumValue = e.keyToValue(prefix.append("Unknown").toAscii().data());
++            enumValue = e.keyToValue(prefix.append("Unknown").toLatin1().data());
+             if (!QString(enumName).isEmpty()) {
+ //                 qDebug() << "enumFromString (" << enumName << ") : converted" << str << "to" << QString("Unknown").append(enumName) << ", enum id" << id;
+             }
+diff --git a/src/transaction.cpp b/src/transaction.cpp
+index e9966c9..9bd14fa 100644
+--- a/src/transaction.cpp
++++ b/src/transaction.cpp
+@@ -744,4 +744,6 @@
+     return Transaction::InternalErrorFailed;
+ }
+ 
++#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+ #include "transaction.moc"
++#endif

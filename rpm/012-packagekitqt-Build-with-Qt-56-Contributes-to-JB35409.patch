@@ -1,0 +1,41 @@
+From d8fdd7ed99549894dfc70c2c4cc47d6625b990d3 Thu, 1 Dec 2016 10:52:56 +0100
+From: Martin Jones <martin.jones@jollamobile.com>
+Date: Fri, 10 Jun 2016 01:45:14 +0000
+Subject: [PATCH] [packagekit-qt] Build with Qt 5.6. Contributes to JB#35409
+
+
+diff --git a/src/daemon.cpp b/src/daemon.cpp
+index 7b49745..c89e91b 100755
+--- a/src/daemon.cpp
++++ b/src/daemon.cpp
+@@ -154,7 +154,7 @@
+ Transaction::ProvidesFlag Daemon::provides()
+ {
+     Q_D(const Daemon);
+-    return static_cast<Transaction::ProvidesFlag>(d->daemon->provides());
++    return static_cast<Transaction::ProvidesFlag>(static_cast<uint>(d->daemon->provides()));
+ }
+ 
+ QString Daemon::backendName()
+@@ -178,7 +178,7 @@
+ Transaction::Filters Daemon::filters()
+ {
+     Q_D(const Daemon);
+-    return static_cast<Transaction::Filters>(d->daemon->filters());
++    return static_cast<Transaction::Filters>(static_cast<uint>(d->daemon->filters()));
+ }
+ 
+ Transaction::Groups Daemon::groups()
+diff --git a/src/transaction.cpp b/src/transaction.cpp
+index 463ad40..d2e2008 100755
+--- a/src/transaction.cpp
++++ b/src/transaction.cpp
+@@ -479,7 +479,7 @@
+ {
+     Q_D(const Transaction);
+     if (d->p) {
+-        return static_cast<Transaction::TransactionFlags>(d->p->transactionFlags());
++        return static_cast<Transaction::TransactionFlags>(static_cast<uint>(d->p->transactionFlags()));
+     }
+     return Transaction::TransactionFlagNone;
+ }

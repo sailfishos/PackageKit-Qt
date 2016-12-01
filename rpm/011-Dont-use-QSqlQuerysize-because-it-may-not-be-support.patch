@@ -1,0 +1,29 @@
+From 982099faf73fd4bde0e301e6da4e0d306509e5f0 Thu, 1 Dec 2016 10:35:36 +0100
+From: Sami Kananoja <sami.kananoja@jollamobile.com>
+Date: Fri, 29 Nov 2013 15:20:03 +0200
+Subject: [PATCH] Don't use QSqlQuery::size because it may not be supported by all platforms/databases
+
+
+diff --git a/src/transaction.cpp b/src/transaction.cpp
+index 740f2f9..463ad40 100755
+--- a/src/transaction.cpp
++++ b/src/transaction.cpp
+@@ -373,11 +373,13 @@
+     q.prepare("SELECT package FROM cache WHERE filename = :desktopFile");
+     q.bindValue(":desktopFile", desktopFile);
+     if (q.exec()) {
+-        if (q.size() == 1) {
+-            q.next();
+-            return q.value(0).toString();
+-        } else if (q.size() > 1) {
+-            qDebug() << "Multiple packages found for query " << q.executedQuery();
++        if (q.first()) {
++            QString pkgName = q.value(0).toString();
++            if (q.next()) {
++                qDebug() << "Multiple packages found for query " << q.executedQuery();
++            } else {
++                return pkgName;
++            }
+         } else {
+             qDebug() << "No packages found for query " << q.executedQuery();
+         }

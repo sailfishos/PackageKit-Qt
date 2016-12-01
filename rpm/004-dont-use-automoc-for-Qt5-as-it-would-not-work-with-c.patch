@@ -1,0 +1,75 @@
+From fb46708f0a9f7f799e06b3537c8d36ddfac8bcc8 Thu, 1 Dec 2016 10:33:17 +0100
+From: Martin Grimme <martin.grimme@gmail.com>
+Date: Fri, 28 Jun 2013 15:53:10 +0200
+Subject: [PATCH] don't use automoc for Qt5 as it would not work with cmake < 2.8.9
+
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 6a1e2e7..74d73ea 100755
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -12,8 +12,6 @@
+ if (Qt5_FOUND)
+   find_package(Qt5DBus REQUIRED)
+   find_package(Qt5Sql REQUIRED)
+-  set(CMAKE_AUTOMOC TRUE)
+-
+   include_directories(${Qt5Core_INCLUDE_DIRS}
+                       ${Qt5DBus_INCLUDE_DIRS}
+                       ${Qt5Sql_INCLUDE_DIRS}
+@@ -27,6 +25,7 @@
+ 
+ include_directories(${CMAKE_BINARY_DIR}
+ 		    ${CMAKE_CURRENT_BINARY_DIR}
++		    ${CMAKE_CURRENT_BINARY_DIR}/src
+ 		    ${CMAKE_CURRENT_SOURCE_DIR}
+ )
+ 
+@@ -68,7 +67,9 @@
+ if (Qt5_FOUND)
+   qt5_add_dbus_interface(packagekitqt_SRC ${PK_INTERFACE_XML} daemonproxy)
+   qt5_add_dbus_interface(packagekitqt_SRC ${PK_TRANSACTION_INTERFACE_XML} transactionproxy)
+-  qt5_wrap_cpp(packagekitqt_MOC_SRC ${packagekitqt_HEADERS} ${packagekitqt_HEADERS_PRIVATE})
++  qt5_generate_moc(daemon.h daemon.moc)
++  qt5_generate_moc(transaction.h transaction.moc)
++  add_custom_target(mocs DEPENDS daemon.moc transaction.moc)
+ elseif (Qt4_FOUND)
+   qt4_add_dbus_interface(packagekitqt_SRC ${PK_INTERFACE_XML} daemonproxy)
+   qt4_add_dbus_interface(packagekitqt_SRC ${PK_TRANSACTION_INTERFACE_XML} transactionproxy)
+@@ -79,6 +80,10 @@
+ add_library(packagekit-qt2 SHARED ${packagekitqt_SRC} ${packagekitqt_HEADERS} ${packagekitqt_HEADERS_PRIVATE})
+ set_target_properties(packagekit-qt2 PROPERTIES VERSION ${QPACKAGEKIT_VERSION} SOVERSION ${QPACKAGEKIT_API_LEVEL})
+ 
++if (Qt5_FOUND)
++  add_dependencies(packagekit-qt2 mocs)
++endif ()
++
+ target_link_libraries(packagekit-qt2
+ 		${QT_LIBRARIES}
+ )
+diff --git a/src/daemon.cpp b/src/daemon.cpp
+old mode 100644
+new mode 100755
+index 7219112..7b49745
+--- a/src/daemon.cpp
++++ b/src/daemon.cpp
+@@ -355,6 +355,4 @@
+     return Transaction::packageIcon(packageID);
+ }
+ 
+-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+ #include "daemon.moc"
+-#endif
+diff --git a/src/transaction.cpp b/src/transaction.cpp
+old mode 100644
+new mode 100755
+index 9bd14fa..e9966c9
+--- a/src/transaction.cpp
++++ b/src/transaction.cpp
+@@ -744,6 +744,4 @@
+     return Transaction::InternalErrorFailed;
+ }
+ 
+-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+ #include "transaction.moc"
+-#endif

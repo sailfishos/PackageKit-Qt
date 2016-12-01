@@ -1,0 +1,18 @@
+From 664a836be2dbcc31beb1c2542ea2c54559089c64 Thu, 1 Dec 2016 10:33:35 +0100
+From: Martin Grimme <martin.grimme@gmail.com>
+Date: Sat, 29 Jun 2013 08:41:30 +0200
+Subject: [PATCH] removed unneccessary line
+
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 74d73ea..39d3b43 100755
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -25,7 +25,6 @@
+ 
+ include_directories(${CMAKE_BINARY_DIR}
+ 		    ${CMAKE_CURRENT_BINARY_DIR}
+-		    ${CMAKE_CURRENT_BINARY_DIR}/src
+ 		    ${CMAKE_CURRENT_SOURCE_DIR}
+ )
+ 
