@@ -41,7 +41,7 @@ Development headers and libraries for PackageKit-Qt.
 
 %build
 rm -f CMakeCache.txt && mkdir -p build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib ..
 make %{?jobs:-j%jobs}
 
 %install
