@@ -14,6 +14,7 @@ BuildRequires: cmake >= 2.8.7
 BuildRequires: PackageKit >= 1.1.7
 
 Patch1:  0001-Avoid-deadlock-on-disconnecting-signals.patch
+Patch2:  0002-Map-DBusError-AccessDenied-to-Transaction-ErrorNotAu.patch
 
 %description
 PackageKit-qt is a Qt support library for PackageKit
@@ -38,6 +39,7 @@ Development headers and libraries for PackageKit-Qt.
 %prep
 %setup -q -n %{name}-%{version}/upstream
 %patch1 -p1
+%patch1 -p2
 
 %build
 rm -f CMakeCache.txt && mkdir -p build && cd build
