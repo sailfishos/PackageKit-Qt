@@ -1,0 +1,47 @@
+From 06842641eab0afe2224146fe23e711edfe2e72f3 Mon Sep 17 00:00:00 2001
+From: Raine Makelainen <raine.makelainen@jolla.com>
+Date: Tue, 5 Nov 2019 15:07:26 +0000
+Subject: [PATCH 2/2] Map DBusError::AccessDenied to
+ Transaction::ErrorNotAuthorized
+
+This commit maps the DBusError:AccessDenied to Transaction::ErrorNotAuthorized
+that seems to closest match. The best would be if the QDBusError itself
+would be passed to the errorCode signal but I did not want to alter
+the API.
+
+Signed-off-by: Raine Makelainen <raine.makelainen@jolla.com>
+---
+ src/transactionprivate.cpp | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/src/transactionprivate.cpp b/src/transactionprivate.cpp
+index 20d5f8e..9b3c4a7 100644
+--- a/src/transactionprivate.cpp
++++ b/src/transactionprivate.cpp
+@@ -197,7 +197,10 @@ void TransactionPrivate::createTransactionFinished(QDBusPendingCallWatcher *call
+     Q_Q(Transaction);
+     QDBusPendingReply<QDBusObjectPath> reply = *call;
+     if (reply.isError()) {
+-        q->errorCode(Transaction::ErrorInternalError, reply.error().message());
++        QDBusError error = reply.error();
++        Transaction::Error transactionError = error.type() == QDBusError::AccessDenied ? Transaction::ErrorNotAuthorized
++                                                                                       : Transaction::ErrorInternalError;
++        q->errorCode(transactionError, error.message());
+         finished(Transaction::ExitFailed, 0);
+         destroy();
+     } else {
+@@ -212,7 +215,10 @@ void TransactionPrivate::methodCallFinished(QDBusPendingCallWatcher *call)
+     Q_Q(Transaction);
+     QDBusPendingReply<> reply = *call;
+     if (reply.isError()) {
+-        q->errorCode(Transaction::ErrorInternalError, reply.error().message());
++        QDBusError error = reply.error();
++        Transaction::Error transactionError = error.type() == QDBusError::AccessDenied ? Transaction::ErrorNotAuthorized
++                                                                                       : Transaction::ErrorInternalError;
++        q->errorCode(transactionError, error.message());
+         finished(Transaction::ExitFailed, 0);
+         destroy();
+     }
+-- 
+2.21.0
+
