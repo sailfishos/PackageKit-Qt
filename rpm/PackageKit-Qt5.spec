@@ -39,7 +39,7 @@ Development headers and libraries for PackageKit-Qt.
 %prep
 %setup -q -n %{name}-%{version}/upstream
 %patch1 -p1
-%patch1 -p2
+%patch2 -p1
 
 %build
 rm -f CMakeCache.txt && mkdir -p build && cd build
