@@ -3,7 +3,6 @@ Name:      PackageKit-Qt5
 Version:   0.9.6+git
 Release:   1
 License:   LGPLv2+
-Group:     System/Libraries
 URL:       http://www.packagekit.org
 Source0:   http://www.packagekit.org/releases/%{name}-%{version}.tar.xz
 
@@ -37,13 +36,11 @@ Requires: pkgconfig(Qt5Xml)
 Development headers and libraries for PackageKit-Qt.
 
 %prep
-%setup -q -n %{name}-%{version}/upstream
-%patch1 -p1
-%patch2 -p1
+%autosetup -p1 -n %{name}-%{version}/upstream
 
 %build
 rm -f CMakeCache.txt && mkdir -p build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib ..
+cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR:PATH=%{_libdir} ..
 make %{?jobs:-j%jobs}
 
 %install
