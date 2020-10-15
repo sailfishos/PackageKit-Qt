@@ -14,6 +14,7 @@ BuildRequires: PackageKit >= 1.1.7
 
 Patch1:  0001-Avoid-deadlock-on-disconnecting-signals.patch
 Patch2:  0002-Map-DBusError-AccessDenied-to-Transaction-ErrorNotAu.patch
+Patch3:  0003-Add-import-and-remove-gpg-key-commands.patch
 
 %description
 PackageKit-qt is a Qt support library for PackageKit
