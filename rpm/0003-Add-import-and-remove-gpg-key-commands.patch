@@ -1,0 +1,114 @@
+From 477bc119ec8c37d99886bcb575c7c8a337b3e3ee Mon Sep 17 00:00:00 2001
+From: Evgenij Taishev <e.taishev@omprussia.ru>
+Date: Thu, 15 Oct 2020 16:09:30 +0300
+Subject: [PATCH 3/3] Add import and remove gpg key commands
+
+Implementation of the PackageKit::importPubkey call wrapper
+---
+ src/daemon.cpp             | 16 ++++++++++++++++
+ src/daemon.h               | 14 ++++++++++++++
+ src/transaction.h          |  4 +++-
+ src/transactionprivate.cpp |  6 ++++++
+ src/transactionprivate.h   |  2 ++
+ 5 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/src/daemon.cpp b/src/daemon.cpp
+index 36e9a46..bb2a03e 100644
+--- a/src/daemon.cpp
++++ b/src/daemon.cpp
+@@ -460,6 +460,22 @@ Transaction *Daemon::installSignature(Transaction::SigType type, const QString &
+     return ret;
+ }
+ 
++Transaction *Daemon::importPubkey(const QString &file)
++{
++    auto ret = new Transaction;
++    ret->d_ptr->role = Transaction::RoleImportPubkey;
++    ret->d_ptr->pubkeyFile = file;
++    return ret;
++}
++
++Transaction *Daemon::removePubkey(const QString &keyId)
++{
++    auto ret = new Transaction;
++    ret->d_ptr->role = Transaction::RoleRemovePubkey;
++    ret->d_ptr->keyId = keyId;
++    return ret;
++}
++
+ Transaction *Daemon::refreshCache(bool force)
+ {
+     Transaction *ret = new Transaction;
+diff --git a/src/daemon.h b/src/daemon.h
+index cb942d2..93f03f9 100644
+--- a/src/daemon.h
++++ b/src/daemon.h
+@@ -604,6 +604,20 @@ public:
+      */
+     static Transaction *installSignature(Transaction::SigType type, const QString &keyID, const QString &packageID);
+ 
++    /**
++     * \brief Import the GPG pubkey from \p file
++     *
++     * \warning check \sa errorCode() signal to know if it the call has any error
++     */
++    static Transaction *importPubkey(const QString &file);
++
++    /**
++     * \brief Remove the GPG pubkey by \p Id
++     *
++     * \warning check \sa errorCode() signal to know if it the call has any error
++     */
++    static Transaction *removePubkey(const QString &keyId);
++
+     /**
+      * Refreshes the package manager's cache
+      *
+diff --git a/src/transaction.h b/src/transaction.h
+index f978215..4126726 100644
+--- a/src/transaction.h
++++ b/src/transaction.h
+@@ -131,7 +131,9 @@ public:
+         RoleGetDetailsLocal,    // Since 0.8.17
+         RoleGetFilesLocal,      // Since 0.9.1
+         RoleRepoRemove,         // Since 0.9.1
+-        RoleUpgradeSystem       // since 1.0.11
++        RoleUpgradeSystem,      // since 1.0.11
++        RoleImportPubkey,
++        RoleRemovePubkey,
+     };
+     Q_ENUM(Role)
+     typedef Bitfield Roles;
+diff --git a/src/transactionprivate.cpp b/src/transactionprivate.cpp
+index 9b3c4a7..7a2caaf 100644
+--- a/src/transactionprivate.cpp
++++ b/src/transactionprivate.cpp
+@@ -183,6 +183,12 @@ void TransactionPrivate::runQueuedTransaction()
+     case Transaction::RoleUpgradeSystem:
+         reply = p->UpgradeSystem(transactionFlags, upgradeDistroId, upgradeKind);
+         break;
++    case Transaction::RoleImportPubkey:
++        reply = p->ImportPubkey(pubkeyFile);
++        break;
++    case Transaction::RoleRemovePubkey:
++        reply = p->RemovePubkey(keyId);
++        break;
+     default:
+         break;
+     }
+diff --git a/src/transactionprivate.h b/src/transactionprivate.h
+index 30fc0b8..bb150c0 100644
+--- a/src/transactionprivate.h
++++ b/src/transactionprivate.h
+@@ -79,6 +79,8 @@ protected:
+     QString repoValue;
+     bool repoEnable;
+     QStringList search;
++    QString pubkeyFile;
++    QString keyId;
+ 
+     // Only used for old transactions
+     QDateTime timespec;
+-- 
+2.20.1
+
