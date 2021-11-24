@@ -1,7 +1,7 @@
-From 477bc119ec8c37d99886bcb575c7c8a337b3e3ee Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Evgenij Taishev <e.taishev@omprussia.ru>
 Date: Thu, 15 Oct 2020 16:09:30 +0300
-Subject: [PATCH 3/3] Add import and remove gpg key commands
+Subject: [PATCH] Add import and remove gpg key commands
 
 Implementation of the PackageKit::importPubkey call wrapper
 ---
@@ -13,10 +13,10 @@ Implementation of the PackageKit::importPubkey call wrapper
  5 files changed, 41 insertions(+), 1 deletion(-)
 
 diff --git a/src/daemon.cpp b/src/daemon.cpp
-index 36e9a46..bb2a03e 100644
+index 8d9eed9..c3d3cab 100644
 --- a/src/daemon.cpp
 +++ b/src/daemon.cpp
-@@ -460,6 +460,22 @@ Transaction *Daemon::installSignature(Transaction::SigType type, const QString &
+@@ -461,6 +461,22 @@ Transaction *Daemon::installSignature(Transaction::SigType type, const QString &
      return ret;
  }
  
@@ -38,12 +38,12 @@ index 36e9a46..bb2a03e 100644
 +
  Transaction *Daemon::refreshCache(bool force)
  {
-     Transaction *ret = new Transaction;
+     auto ret = new Transaction;
 diff --git a/src/daemon.h b/src/daemon.h
-index cb942d2..93f03f9 100644
+index 449cf17..52c8b5d 100644
 --- a/src/daemon.h
 +++ b/src/daemon.h
-@@ -604,6 +604,20 @@ public:
+@@ -601,6 +601,20 @@ public:
       */
      static Transaction *installSignature(Transaction::SigType type, const QString &keyID, const QString &packageID);
  
@@ -65,7 +65,7 @@ index cb942d2..93f03f9 100644
       * Refreshes the package manager's cache
       *
 diff --git a/src/transaction.h b/src/transaction.h
-index f978215..4126726 100644
+index 6f9e312..6b1cf31 100644
 --- a/src/transaction.h
 +++ b/src/transaction.h
 @@ -131,7 +131,9 @@ public:
@@ -80,10 +80,10 @@ index f978215..4126726 100644
      Q_ENUM(Role)
      typedef Bitfield Roles;
 diff --git a/src/transactionprivate.cpp b/src/transactionprivate.cpp
-index 9b3c4a7..7a2caaf 100644
+index 38a4db6..c509a73 100644
 --- a/src/transactionprivate.cpp
 +++ b/src/transactionprivate.cpp
-@@ -183,6 +183,12 @@ void TransactionPrivate::runQueuedTransaction()
+@@ -184,6 +184,12 @@ void TransactionPrivate::runQueuedTransaction()
      case Transaction::RoleUpgradeSystem:
          reply = p->UpgradeSystem(transactionFlags, upgradeDistroId, upgradeKind);
          break;
@@ -97,7 +97,7 @@ index 9b3c4a7..7a2caaf 100644
          break;
      }
 diff --git a/src/transactionprivate.h b/src/transactionprivate.h
-index 30fc0b8..bb150c0 100644
+index 1cc77c7..4112723 100644
 --- a/src/transactionprivate.h
 +++ b/src/transactionprivate.h
 @@ -79,6 +79,8 @@ protected:
@@ -110,5 +110,5 @@ index 30fc0b8..bb150c0 100644
      // Only used for old transactions
      QDateTime timespec;
 -- 
-2.20.1
+2.31.1
 

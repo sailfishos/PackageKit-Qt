@@ -1,10 +1,10 @@
 Summary:   Qt support library for PackageKit
 Name:      PackageKit-Qt5
-Version:   0.9.6+git
+Version:   1.0.2
 Release:   1
 License:   LGPLv2+
 URL:       http://www.packagekit.org
-Source0:   http://www.packagekit.org/releases/%{name}-%{version}.tar.xz
+Source0:   %{name}-%{version}.tar.xz
 
 Requires: PackageKit >= 1.1.7
 BuildRequires: pkgconfig(Qt5Core)
@@ -12,17 +12,14 @@ BuildRequires: pkgconfig(Qt5DBus)
 BuildRequires: cmake >= 2.8.7
 BuildRequires: PackageKit >= 1.1.7
 
-Patch1:  0001-Avoid-deadlock-on-disconnecting-signals.patch
-Patch2:  0002-Map-DBusError-AccessDenied-to-Transaction-ErrorNotAu.patch
-Patch3:  0003-Add-import-and-remove-gpg-key-commands.patch
+Patch1:  0001-Add-import-and-remove-gpg-key-commands.patch
+Patch2:  0002-Add-compatibility-include-dir-for-projects-developed.patch
 
 %description
 PackageKit-qt is a Qt support library for PackageKit
 
 %package devel
 Summary: Development headers for PackageKit-Qt
-License: LGPLv2+
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: pkgconfig
 # These requirements are because of the line:
@@ -40,14 +37,13 @@ Development headers and libraries for PackageKit-Qt.
 %autosetup -p1 -n %{name}-%{version}/upstream
 
 %build
-rm -f CMakeCache.txt && mkdir -p build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR:PATH=%{_libdir} ..
-make %{?jobs:-j%jobs}
+mkdir -p build && pushd build
+%cmake  ..
+%make_build
 
 %install
-rm -rf %{buildroot}
-cd build
-make DESTDIR=%{buildroot} install
+pushd build
+%make_install
 
 %post -p /sbin/ldconfig
 
@@ -55,12 +51,12 @@ make DESTDIR=%{buildroot} install
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING
+%license COPYING
 %{_libdir}/libpackagekitqt5.so.*
 
 %files devel
 %defattr(-,root,root,-)
-%doc AUTHORS COPYING NEWS
+%doc AUTHORS NEWS
 %{_libdir}/libpackagekitqt*.so
 %{_libdir}/pkgconfig/packagekitqt5.pc
 %dir %{_includedir}/packagekitqt5/PackageKit/
