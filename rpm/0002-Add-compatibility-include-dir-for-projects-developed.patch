@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Pekka Vuorela <pekka.vuorela@jolla.com>
+Date: Wed, 24 Nov 2021 16:28:13 +0200
+Subject: [PATCH] Add compatibility include dir for projects developed with
+ older version
+
+Upstream change ref: https://github.com/hughsie/PackageKit-Qt/issues/26
+Problem being that code then compiles either with current version
+or the old version.
+---
+ src/packagekitqt5.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/packagekitqt5.pc.in b/src/packagekitqt5.pc.in
+index 0bf324c..994eb34 100644
+--- a/src/packagekitqt5.pc.in
++++ b/src/packagekitqt5.pc.in
+@@ -8,4 +8,4 @@ Description: PackageKit is a package management abstraction layer.
+ Version: @PROJECT_VERSION@
+ Requires: Qt5Core, Qt5DBus
+ Libs: -L${libdir} -lpackagekitqt5
+-Cflags: -I${includedir}/packagekitqt5
++Cflags: -I${includedir}/packagekitqt5 -I${includedir}/packagekitqt5/PackageKit
+-- 
+2.31.1
+
