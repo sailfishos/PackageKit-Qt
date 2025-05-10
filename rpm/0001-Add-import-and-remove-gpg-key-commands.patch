@@ -13,10 +13,10 @@ Implementation of the PackageKit::importPubkey call wrapper
  5 files changed, 41 insertions(+), 1 deletion(-)
 
 diff --git a/src/daemon.cpp b/src/daemon.cpp
-index 8d9eed9..c3d3cab 100644
+index 31ebc6dc031facf98332feb80ad17b9ce1aa87d5..6515416352fd596fcd378a88ce45da09cbbecef0 100644
 --- a/src/daemon.cpp
 +++ b/src/daemon.cpp
-@@ -461,6 +461,22 @@ Transaction *Daemon::installSignature(Transaction::SigType type, const QString &
+@@ -529,6 +529,22 @@ Transaction *Daemon::installSignature(Transaction::SigType type, const QString &
      return ret;
  }
  
@@ -40,7 +40,7 @@ index 8d9eed9..c3d3cab 100644
  {
      auto ret = new Transaction;
 diff --git a/src/daemon.h b/src/daemon.h
-index 449cf17..52c8b5d 100644
+index 54118289862baa3d0cae5d1335b0fdda89f76f3b..8187478b6a07c66a4b8a148297737fb47f760753 100644
 --- a/src/daemon.h
 +++ b/src/daemon.h
 @@ -601,6 +601,20 @@ public:
@@ -65,10 +65,10 @@ index 449cf17..52c8b5d 100644
       * Refreshes the package manager's cache
       *
 diff --git a/src/transaction.h b/src/transaction.h
-index 6f9e312..6b1cf31 100644
+index a8c32053733d9382132067f9b331cd9e2dd9ccf4..0ef73b0956433f105e7005caa5e3aa1494cbeb60 100644
 --- a/src/transaction.h
 +++ b/src/transaction.h
-@@ -131,7 +131,9 @@ public:
+@@ -134,7 +134,9 @@ public:
          RoleGetDetailsLocal,    // Since 0.8.17
          RoleGetFilesLocal,      // Since 0.9.1
          RoleRepoRemove,         // Since 0.9.1
@@ -80,7 +80,7 @@ index 6f9e312..6b1cf31 100644
      Q_ENUM(Role)
      typedef Bitfield Roles;
 diff --git a/src/transactionprivate.cpp b/src/transactionprivate.cpp
-index 38a4db6..c509a73 100644
+index 550e0ab284519c7ed493ef2f0d2be92ec4e55369..633e1bde7b657e18e9a4beb2b157c2bd0b1be480 100644
 --- a/src/transactionprivate.cpp
 +++ b/src/transactionprivate.cpp
 @@ -184,6 +184,12 @@ void TransactionPrivate::runQueuedTransaction()
@@ -94,13 +94,13 @@ index 38a4db6..c509a73 100644
 +        reply = p->RemovePubkey(keyId);
 +        break;
      default:
-         break;
+         return;
      }
 diff --git a/src/transactionprivate.h b/src/transactionprivate.h
-index 1cc77c7..4112723 100644
+index 01463c74240507515b3579db6b3f52a5054682bc..a41a0c306b2660d846ec6e6933fa54ec527236b1 100644
 --- a/src/transactionprivate.h
 +++ b/src/transactionprivate.h
-@@ -79,6 +79,8 @@ protected:
+@@ -105,6 +105,8 @@ protected:
      QString repoValue;
      bool repoEnable;
      QStringList search;
@@ -109,6 +109,3 @@ index 1cc77c7..4112723 100644
  
      // Only used for old transactions
      QDateTime timespec;
--- 
-2.31.1
-
