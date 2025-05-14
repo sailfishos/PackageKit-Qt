@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@jolla.com>
+Date: Sun, 11 May 2025 00:14:44 +0300
+Subject: [PATCH] Fix build with Qt 5.6
+
+---
+ CMakeLists.txt             | 2 +-
+ src/transactionprivate.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 46aae35648da8ad7b991a4443f62feba9f28d170..36a528065464af0535641da88309e76753e0a396 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -27,7 +27,7 @@ else()
+   set(QT_VERSION_MAJOR 5)
+ endif()
+ 
+-find_package(Qt${QT_VERSION_MAJOR} 5.10 REQUIRED COMPONENTS Core DBus)
++find_package(Qt${QT_VERSION_MAJOR} 5.6 REQUIRED COMPONENTS Core DBus)
+ 
+ add_definitions(
+     -DQT_NO_KEYWORDS
+diff --git a/src/transactionprivate.cpp b/src/transactionprivate.cpp
+index 6b2817c3a74629031f87d3c4c879fff75a9b84ee..83580a7d09f10606ca38626bb75575a889d735df 100644
+--- a/src/transactionprivate.cpp
++++ b/src/transactionprivate.cpp
+@@ -333,7 +333,7 @@ void TransactionPrivate::updateProperties(const QVariantMap &properties)
+             QMetaObject::invokeMethod(q, "uidChanged", Qt::QueuedConnection);
+         } else if (property == QLatin1String("Sender")) {
+             senderName = value.toString();
+-            QMetaObject::invokeMethod(q, &Transaction::senderNameChanged, Qt::QueuedConnection);
++            QMetaObject::invokeMethod(q, "senderNameChanged", Qt::QueuedConnection);
+         } else {
+             qCWarning(PACKAGEKITQT_TRANSACTION) << "Unknown Transaction property:" << property << value;
+         }

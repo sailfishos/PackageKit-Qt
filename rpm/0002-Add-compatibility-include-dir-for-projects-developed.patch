@@ -12,7 +12,7 @@ or the old version.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/packagekitqt5.pc.in b/src/packagekitqt5.pc.in
-index 0bf324c..994eb34 100644
+index 0bf324c097acf12098feccafb8ab3110b211cf24..994eb34be556282585ec5a9bf8b21593febfe14d 100644
 --- a/src/packagekitqt5.pc.in
 +++ b/src/packagekitqt5.pc.in
 @@ -8,4 +8,4 @@ Description: PackageKit is a package management abstraction layer.
@@ -21,6 +21,3 @@ index 0bf324c..994eb34 100644
  Libs: -L${libdir} -lpackagekitqt5
 -Cflags: -I${includedir}/packagekitqt5
 +Cflags: -I${includedir}/packagekitqt5 -I${includedir}/packagekitqt5/PackageKit
--- 
-2.31.1
-

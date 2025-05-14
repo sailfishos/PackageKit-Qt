@@ -1,6 +1,8 @@
+%undefine __cmake_in_source_build
+
 Summary:   Qt support library for PackageKit
 Name:      PackageKit-Qt5
-Version:   1.0.2
+Version:   1.1.2
 Release:   1
 License:   LGPLv2+
 URL:       http://www.packagekit.org
@@ -14,6 +16,9 @@ BuildRequires: PackageKit >= 1.1.7
 
 Patch1:  0001-Add-import-and-remove-gpg-key-commands.patch
 Patch2:  0002-Add-compatibility-include-dir-for-projects-developed.patch
+Patch3:  0003-Revert-offline-Make-sure-we-allow-for-interactive-au.patch
+Patch4:  0004-Revert-Prefer-invoking-methods-by-pointer-rather-tha.patch
+Patch5:  0005-Fix-build-with-Qt-5.6.patch
 
 %description
 PackageKit-qt is a Qt support library for PackageKit
@@ -37,25 +42,21 @@ Development headers and libraries for PackageKit-Qt.
 %autosetup -p1 -n %{name}-%{version}/upstream
 
 %build
-mkdir -p build && pushd build
-%cmake  ..
-%make_build
+%cmake
+%cmake_build
 
 %install
-pushd build
-%make_install
+%cmake_install
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %license COPYING
 %{_libdir}/libpackagekitqt5.so.*
 
 %files devel
-%defattr(-,root,root,-)
 %doc AUTHORS NEWS
 %{_libdir}/libpackagekitqt*.so
 %{_libdir}/pkgconfig/packagekitqt5.pc
